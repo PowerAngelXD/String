@@ -5,6 +5,7 @@
 #include <cstring>
 #include <algorithm>
 #include <stdexcept>
+#include <vector>
 
 class String {
     char* _content = nullptr;
@@ -36,9 +37,11 @@ class String {
         _cap = new_cap;
         _len = new_len;
 
-        _content[new_len + 1] = '\0';
+        _content[new_len] = '\0';
     }
 public:
+    String()=default;
+
     String(const char* s) {
         _len = strlen(s);
         resize(_len);
@@ -79,6 +82,20 @@ public:
         resize(new_len);
 
         std::memcpy(_content + old_len, str, app_len);
+         _len = new_len;
+
+        _content[_len] = '\0';
+
+        return *this;
+    }
+
+    String& append(char ch) {
+        std::size_t new_len = _len + 1;
+        std::size_t old_len = _len;
+
+        resize(new_len);
+
+        std::memcpy(_content + old_len, &ch, 1);
          _len = new_len;
 
         _content[_len] = '\0';
@@ -150,6 +167,24 @@ public:
         return *this;
     }
 
+    // 按照 pattern 分割字符串，以vector形式返回
+    std::vector<String> split(char pattern) {
+        std::vector<String> result;
+
+        String tmp;
+        for (std::size_t i = 0; i < _len; i ++) {
+            char chk = (*this)[i];
+            if (chk == pattern) {
+                result.push_back(tmp);
+                tmp.free();
+                continue;
+            }
+            tmp += chk;
+        }
+
+        return result;
+    }
+
     const char* c_str() const {
         return _content ? _content : "\0";
     }
@@ -163,8 +198,10 @@ public:
         return oss;
     }
 
-    friend std::istream& operator>> (std::istream& iss, const String& str) {
-        iss >> str._content;
+    friend std::istream& operator>> (std::istream& iss, String& str) {
+        char* read;
+        iss >> read;
+        str = read;
         return iss;
     }
 
@@ -176,6 +213,7 @@ public:
     }
 
     String& operator+= (const String& str) { append(str); return *this;}
+    String& operator+= (char ch) { append(ch); return *this;}
     String& operator+= (const char* str) { append(str); return *this;}
 
     String& operator= (const char* str) {
