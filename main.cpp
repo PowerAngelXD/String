@@ -23,5 +23,15 @@ int main() {
     std::cout << str1.cap() << std::endl;
 
     std::cout << str.slice(2, 6) << std::endl;
-    return 0;
+
+    //String str2;
+    //std::cin >> str2;
+    //std::cout << str2 << std::endl;
+
+    String str3 = "hello;world;wcmd;dggdfs;3423";
+    auto r = str3.split(';');
+
+    for (auto s: r) {
+        std::cout << s << std::endl;
+    }
 }
