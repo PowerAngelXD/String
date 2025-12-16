@@ -43,14 +43,14 @@ public:
     String()=default;
 
     String(const char* s) {
-        _len = strlen(s);
+        _len = strlen(s) + 1;
         resize(_len);
         std::memcpy(_content, s, _len);
         _content[_len] = '\0';
     }
 
     String(const char* s, std::size_t len) {
-        _len = len;
+        _len = len + 1;
         resize(len);
         std::memcpy(_content, s, _len);
         _content[_len] = '\0';
