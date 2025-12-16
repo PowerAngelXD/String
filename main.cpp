@@ -1,4 +1,5 @@
 #include "String.hpp"
+using namespace fzlib;
 
 int main() {
     String str("asdas");
