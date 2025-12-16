@@ -34,4 +34,7 @@ int main() {
     for (auto s: r) {
         std::cout << s << std::endl;
     }
+
+    String str4 = "";
+    std::cout << str4 << std::endl;
 }
