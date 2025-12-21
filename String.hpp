@@ -223,20 +223,27 @@ namespace fzlib {
             return _content[index];
         }
 
-        String &operator+=(const String &str) {
-            append(str);
-            return *this;
-        }
-        String &operator+=(char ch) {
-            append(ch);
-            return *this;
-        }
-        String &operator+=(const char *str) {
+        String &operator+= (const String &str) {
             append(str);
             return *this;
         }
 
-        String &operator=(const char *str) {
+        String &operator+= (char ch) {
+            append(ch);
+            return *this;
+        }
+
+        String &operator+= (const char *str) {
+            append(str);
+            return *this;
+        }
+
+        String &operator+ (const String &str) {
+            append(str);
+            return *this;
+        }
+
+        String &operator= (const char *str) {
             free();
 
             _len = strlen(str);
@@ -247,7 +254,7 @@ namespace fzlib {
             return *this;
         }
 
-        String &operator=(const String &str) {
+        String &operator= (const String &str) {
             free();
 
             _len = str._len;
