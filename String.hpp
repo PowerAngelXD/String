@@ -201,7 +201,7 @@ namespace fzlib {
 
         // Friend
 
-        friend std::ostream &operator<<(std::ostream &oss, const String &str) {
+        friend std::ostream& operator<<(std::ostream &oss, const String &str) {
             if (str._content)
             {
                 oss.write(str._content, str._len);
@@ -209,7 +209,7 @@ namespace fzlib {
             return oss;
         }
 
-        friend std::istream &operator>>(std::istream &iss, String &str) {
+        friend std::istream& operator>>(std::istream &iss, String &str) {
             str.free();
             char ch;
             
@@ -225,7 +225,7 @@ namespace fzlib {
             return iss;
         }
 
-        friend std::istream &getline(std::istream &is, String &str, char delim = '\n') {
+        friend std::istream& getline(std::istream &is, String &str, char delim = '\n') {
             str.free();
             char ch;
             while (is.get(ch)) {
@@ -239,34 +239,34 @@ namespace fzlib {
 
         // Operators
 
-        char &operator[](std::size_t index) {
+        char&  operator[](std::size_t index) {
             if (index >= _len)
                 throw std::out_of_range("Cannot get a out of index value!");
 
             return _content[index];
         }
 
-        String &operator+= (const String &str) {
+        String& operator+= (const String &str) {
             append(str);
             return *this;
         }
 
-        String &operator+= (char ch) {
+        String& operator+= (char ch) {
             append(ch);
             return *this;
         }
 
-        String &operator+= (const char *str) {
+        String& operator+= (const char *str) {
             append(str);
             return *this;
         }
 
-        String &operator+ (const String &str) {
+        String& operator+ (const String &str) {
             append(str);
             return *this;
         }
 
-        String &operator= (const char *str) {
+        String& operator= (const char *str) {
             free();
 
             _len = strlen(str);
@@ -277,7 +277,7 @@ namespace fzlib {
             return *this;
         }
 
-        String &operator= (const String &str) {
+        String& operator= (const String& str) {
             free();
 
             _len = str._len;
@@ -286,6 +286,16 @@ namespace fzlib {
             _content[_len] = '\0';
 
             return *this;
+        }
+
+        bool operator== (const String& str) {
+            if (_len != str._len) return false;
+            else if (_content != str._content) return false;
+            else return true;
+        }
+
+        bool operator!= (const String& str) {
+            return !operator==(str);
         }
     };
 }
