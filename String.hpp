@@ -199,7 +199,7 @@ namespace fzlib {
             return _content ? _content : "\0";
         }
 
-        // Operators
+        // Friend
 
         friend std::ostream &operator<<(std::ostream &oss, const String &str) {
             if (str._content)
@@ -236,6 +236,8 @@ namespace fzlib {
             }
             return is;
         }
+
+        // Operators
 
         char &operator[](std::size_t index) {
             if (index >= _len)
