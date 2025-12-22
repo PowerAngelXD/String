@@ -27,4 +27,6 @@ int main() {
     getline(std::cin, str4);
 
     std::cout << str4 << std::endl;
+
+    std::cout << (str4 == str3) << std::endl;
 }
