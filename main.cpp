@@ -22,4 +22,9 @@ int main() {
     }
 
     std::cout << str1 + str3 << std::endl;
+
+    String str4;
+    getline(std::cin, str4);
+
+    std::cout << str4 << std::endl;
 }
