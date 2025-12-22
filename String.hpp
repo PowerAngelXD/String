@@ -43,6 +43,9 @@ namespace fzlib {
         }
 
     public:
+        using iter = char*;
+        using const_iter = const char*;
+
         String() = default;
 
         String(const char *s) {
@@ -69,6 +72,12 @@ namespace fzlib {
         ~String() { free(); }
 
         // Methods
+
+        iter begin() { return _content; }
+        const_iter begin() const { return _content; }
+
+        iter end() { return _content + _len; }
+        const_iter end() const { return _content + _len; }
 
         // 获得当前字符串的长度
         std::size_t len() const { return _len; }
@@ -199,6 +208,72 @@ namespace fzlib {
             return _content ? _content : "\0";
         }
 
+        // Operators
+
+        char&  operator[](std::size_t index) {
+            if (index >= _len)
+                throw std::out_of_range("Cannot get a out of index value!");
+
+            return _content[index];
+        }
+
+        String& operator+= (const String &str) {
+            append(str);
+            return *this;
+        }
+
+        String& operator+= (char ch) {
+            append(ch);
+            return *this;
+        }
+
+        String& operator+= (const char *str) {
+            append(str);
+            return *this;
+        }
+
+        String& operator+ (const String &str) {
+            append(str);
+            return *this;
+        }
+
+        String& operator+ (const char *str) {
+            append(str);
+            return *this;
+        }
+
+        String& operator= (const char *str) {
+            free();
+
+            _len = strlen(str);
+            resize(_len);
+            std::memcpy(_content, str, _len);
+            _content[_len] = '\0';
+
+            return *this;
+        }
+
+        String& operator= (const String& str) {
+            free();
+
+            _len = str._len;
+            resize(_len);
+            std::memcpy(_content, str._content, _len);
+            _content[_len] = '\0';
+
+            return *this;
+        }
+
+        bool operator== (const String& str) {
+            if (_len != str._len) return false;
+            else if (_content != str._content) return false;
+            else return true;
+        }
+
+        bool operator!= (const String& str) {
+            return !operator==(str);
+        }
+
         // Friend
 
         friend std::ostream& operator<<(std::ostream &oss, const String &str) {
@@ -237,65 +312,9 @@ namespace fzlib {
             return is;
         }
 
-        // Operators
-
-        char&  operator[](std::size_t index) {
-            if (index >= _len)
-                throw std::out_of_range("Cannot get a out of index value!");
-
-            return _content[index];
-        }
-
-        String& operator+= (const String &str) {
-            append(str);
-            return *this;
-        }
-
-        String& operator+= (char ch) {
-            append(ch);
-            return *this;
-        }
-
-        String& operator+= (const char *str) {
-            append(str);
-            return *this;
-        }
-
-        String& operator+ (const String &str) {
-            append(str);
-            return *this;
-        }
-
-        String& operator= (const char *str) {
-            free();
-
-            _len = strlen(str);
-            resize(_len);
-            std::memcpy(_content, str, _len);
-            _content[_len] = '\0';
-
-            return *this;
-        }
-
-        String& operator= (const String& str) {
-            free();
-
-            _len = str._len;
-            resize(_len);
-            std::memcpy(_content, str._content, _len);
-            _content[_len] = '\0';
-
-            return *this;
-        }
-
-        bool operator== (const String& str) {
-            if (_len != str._len) return false;
-            else if (_content != str._content) return false;
-            else return true;
-        }
-
-        bool operator!= (const String& str) {
-            return !operator==(str);
+        friend String& operator+ (const char* s_constant, String &str) {
+            str.append(s_constant);
+            return str;
         }
     };
 }
