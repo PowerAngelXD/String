@@ -14,7 +14,7 @@ int main() {
 
     std::cout << str1.slice(2, 4) << std::endl;
 
-    String str3 = "hello;world;wcmd;dggdfs;3423";
+    String str3 = "hello;world;wcmd;dggdfs;starry!!";
     auto r = str3.split(';');
 
     for (auto s: r) {
