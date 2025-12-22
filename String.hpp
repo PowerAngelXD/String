@@ -184,7 +184,7 @@ namespace fzlib {
             String tmp;
             for (std::size_t i = 0; i < _len; i++) {
                 char chk = (*this)[i];
-                if (chk == pattern) {
+                if (chk == pattern || chk == '\0') {
                     result.push_back(tmp);
                     tmp.free();
                     continue;
