@@ -69,6 +69,20 @@ namespace fzlib {
             _content[_len] = '\0';
         }
 
+        String(std::string&& str) {
+            _len = str.size() + 1;
+            resize(_len);
+            std::memcpy(_content, str.c_str(), _len);
+            _content[_len] = '\0';
+        }
+
+        String(const std::string& str) {
+            _len = str.size() + 1;
+            resize(_len);
+            std::memcpy(_content, str.c_str(), _len);
+            _content[_len] = '\0';
+        }
+
         ~String() { free(); }
 
         // Methods
