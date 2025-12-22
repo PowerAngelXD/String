@@ -210,10 +210,31 @@ namespace fzlib {
         }
 
         friend std::istream &operator>>(std::istream &iss, String &str) {
-            char *read;
-            iss >> read;
-            str = read;
+            str.free();
+            char ch;
+            
+            while (iss.get(ch) && std::isspace(ch));
+
+            if (iss) {
+                str.append(ch);
+                while (iss.get(ch) && !std::isspace(ch)) {
+                    str.append(ch);
+                }
+                if (iss) iss.putback(ch);
+            }
             return iss;
+        }
+
+        friend std::istream &getline(std::istream &is, String &str, char delim = '\n') {
+            str.free();
+            char ch;
+            while (is.get(ch)) {
+                if (ch == delim) {
+                    break;
+                }
+                str.append(ch);
+            }
+            return is;
         }
 
         char &operator[](std::size_t index) {
