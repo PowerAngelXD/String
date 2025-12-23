@@ -2,7 +2,7 @@
 using namespace fzlib;
 
 int main() {
-    String str1 = "World?";
+    String str1("World?");
     std::cout << str1 << std::endl;
     str1 = "Hello???";
     std::cout << str1 << std::endl;
@@ -14,7 +14,7 @@ int main() {
 
     std::cout << str1.slice(2, 4) << std::endl;
 
-    String str3 = "hello;world;wcmd;dggdfs;starry!!";
+    String str3 = "hello;world;wcmd;dggdfs;starry!!;";
     auto r = str3.split(';');
 
     for (auto s: r) {
