@@ -24,8 +24,8 @@ namespace fzlib {
             if (new_len <= _cap)
                 return;
 
-            std::size_t new_cap = std::max<std::size_t>(new_len, _cap * 1.5);
-            char *new_content = new char[new_cap + 1];
+            std::size_t new_cap = std::max<std::size_t>(new_len, _cap * 2) + 1;
+            char *new_content = new char[new_cap];
 
             if (new_content == nullptr)
                 throw std::bad_alloc();
@@ -49,14 +49,24 @@ namespace fzlib {
         String() = default;
 
         String(const char *s) {
-            _len = strlen(s) + 1;
+            _len = strlen(s);
+            if (_len == 0) {
+                resize(1);
+                _content[0] = '\0';
+                return;
+            }
             resize(_len);
             std::memcpy(_content, s, _len);
             _content[_len] = '\0';
         }
 
         String(const char *s, std::size_t len) {
-            _len = len + 1;
+            _len = len;
+            if (_len == 0) {
+                resize(1);
+                _content[0] = '\0';
+                return;
+            }
             resize(len);
             std::memcpy(_content, s, _len);
             _content[_len] = '\0';
@@ -64,13 +74,18 @@ namespace fzlib {
 
         String(const String &str) {
             resize(str._len);
+            if (_len == 0) {
+                resize(1);
+                _content[0] = '\0';
+                return;
+            }
             std::memcpy(_content, str._content, str._len);
             _len = str._len;
             _content[_len] = '\0';
         }
 
         String(std::string&& str) {
-            _len = str.size() + 1;
+            _len = str.size();
             resize(_len);
             std::memcpy(_content, str.c_str(), _len);
             _content[_len] = '\0';
@@ -78,8 +93,25 @@ namespace fzlib {
 
         String(const std::string& str) {
             _len = str.size();
+            if (_len == 0) {
+                resize(1);
+                _content[0] = '\0';
+                return;
+            }
             resize(_len);
             std::memcpy(_content, str.c_str(), _len);
+            _content[_len] = '\0';
+        }
+
+        String(std::string_view sv) {
+            _len = sv.size();
+            if (_len == 0) {
+                resize(1);
+                _content[0] = '\0';
+                return;
+            }
+            resize(_len);
+            std::memcpy(_content, sv.data(), _len);
             _content[_len] = '\0';
         }
 
@@ -92,6 +124,11 @@ namespace fzlib {
             }
 
             _len = static_cast<size_t>(count);
+            if (_len == 0) {
+                resize(1);
+                _content[0] = '\0';
+                return;
+            }
 
             _content = new char[_len + 1];
 
@@ -231,6 +268,9 @@ namespace fzlib {
                 }
                 tmp += chk;
             }
+            
+            if (tmp._len != 0)
+                result.push_back(tmp);
 
             return result;
         }
@@ -245,6 +285,12 @@ namespace fzlib {
             if (index >= _len)
                 throw std::out_of_range("Cannot get a out of index value!");
 
+            return _content[index];
+        }
+
+        char operator[](std::size_t index) const {
+            if (index >= _len)
+                throw std::out_of_range("Index out of range!");
             return _content[index];
         }
 
@@ -264,44 +310,70 @@ namespace fzlib {
         }
 
         String operator+ (const String &str) {
-            append(str);
-            return *this;
+            String new_str = str;
+            new_str.append(str);
+            return new_str;
         }
 
-        String& operator+ (const char *str) {
-            append(str);
-            return *this;
+        String operator+ (const char *str) {
+            String new_str = str;
+            new_str.append(str);
+            return new_str;
         }
 
         String& operator= (const char *str) {
+            if (str == nullptr) {
+                free();
+                return *this;
+            }
+    
+            if (_content == str) return *this;
+
+            std::size_t new_l = strlen(str);
+            _len = 0;
+            resize(new_l);
+
+            std::memcpy(_content, str, new_l);
+            _len = new_l;
+            _content[_len] = '\0';
+
+            return *this;
+        }
+
+        String& operator= (char ch) {
             free();
 
-            _len = strlen(str);
+            _len = 1;
             resize(_len);
-            std::memcpy(_content, str, _len);
+            std::memcpy(_content, &ch, _len);
             _content[_len] = '\0';
 
             return *this;
         }
 
         String& operator= (const String& str) {
-            free();
+            if (this == &str) return *this;
 
+            _len = 0; 
+            resize(str._len); 
+
+            if (str._len > 0) {
+                std::memcpy(_content, str._content, str._len);
+            }
+            
             _len = str._len;
-            resize(_len);
-            std::memcpy(_content, str._content, _len);
             _content[_len] = '\0';
 
             return *this;
         }
 
-        bool operator== (const String& str) {
+        bool operator== (const String& str) const {
             if (_len != str._len) return false;
-            else if (_content != str._content) return false;
+            else if (std::memcmp(_content, str._content, _len) != 0) return false;
             else return true;
         }
 
-        bool operator!= (const String& str) {
+        bool operator!= (const String& str) const {
             return !operator==(str);
         }
 
@@ -346,17 +418,15 @@ namespace fzlib {
         friend String operator+ (const char* lhs, String &rhs) {
             String result(lhs);
             result += rhs;
-            return rhs;
+            return result;
         }
 
-        // 处理：String + const char*
         friend String operator+(const String& lhs, const char* rhs) {
             String result(lhs);
             result.append(rhs);
             return result;
         }
 
-        // 处理：String + String
         friend String operator+(const String& lhs, const String& rhs) {
             String result(lhs);
             result.append(rhs);
