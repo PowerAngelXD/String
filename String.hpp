@@ -24,8 +24,8 @@ namespace fzlib {
             if (new_len <= _cap)
                 return;
 
-            std::size_t new_cap = std::max<std::size_t>(new_len, _cap * 2) + 1;
-            char *new_content = new char[new_cap];
+            std::size_t new_cap = std::max<std::size_t>(new_len, _cap * 2);
+            char *new_content = new char[new_cap + 1];
 
             if (new_content == nullptr)
                 throw std::bad_alloc();
@@ -310,13 +310,13 @@ namespace fzlib {
         }
 
         String operator+ (const String &str) {
-            String new_str = str;
+            String new_str(*this);
             new_str.append(str);
             return new_str;
         }
 
         String operator+ (const char *str) {
-            String new_str = str;
+            String new_str(*this);
             new_str.append(str);
             return new_str;
         }
