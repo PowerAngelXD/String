@@ -294,6 +294,10 @@ namespace fzlib {
             return _content[index];
         }
 
+        bool operator<(const String& other) const {
+            return std::strcmp(_content, other._content) < 0;
+        }
+
         String& operator+= (const String &str) {
             append(str);
             return *this;
